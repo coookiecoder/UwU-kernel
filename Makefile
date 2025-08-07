@@ -6,27 +6,22 @@ CPP_FLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdli
 ASM_FLAGS = -f elf32
 
 ASM_FILE = src/boot.s src/ports.s
-CPP_FILE = src/main.cpp src/kernel_utils/kernel_input.cpp src/kernel_utils/kernel_output.cpp
+CPP_FILE = src/main.cpp \
+	src/kernel_utils/kernel_input.cpp src/kernel_utils/kernel_output.cpp src/kernel_utils/kernel_time.cpp
 
 ASM_OBJECT_FILE = obj/boot.o obj/ports.o
-CPP_OBJECT_FILE = obj/main.o obj/kernel_utils/kernel_input.o obj/kernel_utils/kernel_output.o
+CPP_OBJECT_FILE = obj/main.o \
+	obj/kernel_utils/kernel_input.o obj/kernel_utils/kernel_output.o obj/kernel_utils/kernel_time.o
 
 TARGET = UwU.bin
+TARGET_ISO = UwU.iso
 
-all:$(TARGET)
+all:$(TARGET) $(TARGET_ISO)
 
 $(TARGET): $(ASM_OBJECT_FILE) $(CPP_OBJECT_FILE)
 	$(LD) -T linker.ld -o $(TARGET) $(ASM_OBJECT_FILE) $(CPP_OBJECT_FILE)
 
-obj/%.o: src/%.s
-	mkdir -p $(dir $@)
-	$(ASM) $(ASM_FLAGS) $< -o $@
-
-obj/%.o: src/%.cpp
-	mkdir -p $(dir $@)
-	$(CPP) $(CPP_FLAGS) -c $< -o $@
-
-run:all
+$(TARGET_ISO): $(TARGET)
 	mkdir -p iso/boot/grub
 	cp $(TARGET) iso/boot/UwU.bin
 	echo "set timeout=0" > iso/boot/grub/grub.cfg
@@ -37,9 +32,19 @@ run:all
 	echo "    boot" >> iso/boot/grub/grub.cfg
 	echo "}" >> iso/boot/grub/grub.cfg
 	grub-mkrescue -o UwU.iso iso
+
+obj/%.o: src/%.s
+	mkdir -p $(dir $@)
+	$(ASM) $(ASM_FLAGS) $< -o $@
+
+obj/%.o: src/%.cpp
+	mkdir -p $(dir $@)
+	$(CPP) $(CPP_FLAGS) -c $< -o $@
+
+run:all
 	qemu-system-i386 -cdrom UwU.iso
 
 clean:
-	rm -rf $(TARGET) $(ASM_OBJECT_FILE) $(CPP_OBJECT_FILE) iso UwU.iso
+	rm -rf $(TARGET) obj iso UwU.iso
 
 re: clean all

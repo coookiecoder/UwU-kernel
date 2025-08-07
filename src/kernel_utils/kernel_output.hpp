@@ -28,6 +28,7 @@ extern "C" void out_byte(unsigned short port, unsigned char data);
 
 namespace cookie {
     int kernel_print(const char *str, short line = 0, short column = 0);
+    int kernel_print(unsigned char c, short line = 0, short column = 0);
     void kernel_clear_screen();
 }
 
