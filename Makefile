@@ -5,13 +5,13 @@ LD = i686-linux-gnu-ld
 CPP_FLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdlib -nodefaultlibs
 ASM_FLAGS = -f elf32
 
-ASM_FILE = src/boot.s src/ports.s
+ASM_FILE = src/boot.s src/ports.s src/gdt.s
 CPP_FILE = src/main.cpp \
-	src/kernel_utils/kernel_input.cpp src/kernel_utils/kernel_output.cpp src/kernel_utils/kernel_time.cpp
+	src/kernel_utils/kernel_input.cpp src/kernel_utils/kernel_output.cpp src/kernel_utils/kernel_time.cpp src/kernel_utils/kernel_type.cpp
 
-ASM_OBJECT_FILE = obj/boot.o obj/ports.o
+ASM_OBJECT_FILE = obj/boot.o obj/ports.o obj/gdt.o
 CPP_OBJECT_FILE = obj/main.o \
-	obj/kernel_utils/kernel_input.o obj/kernel_utils/kernel_output.o obj/kernel_utils/kernel_time.o
+	obj/kernel_utils/kernel_input.o obj/kernel_utils/kernel_output.o obj/kernel_utils/kernel_time.o obj/kernel_utils/kernel_type.o
 
 TARGET = UwU.bin
 TARGET_ISO = UwU.iso

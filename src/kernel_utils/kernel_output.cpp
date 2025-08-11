@@ -2,8 +2,8 @@
 #include "kernel_output.hpp"
 
 namespace cookie { 
-    int kernel_print(const char *str, const short line, const short column, const int color) {
-        volatile unsigned short * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
+    int kernel_print(const char *str, const int16_t line, const int16_t column, const int32_t color) {
+        volatile uint16_t * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
 
         const int offset = column + line * VGA_WIDTH;
         int i = 0;
@@ -16,8 +16,8 @@ namespace cookie {
         return i;
     }
 
-    int kernel_print(const unsigned char c, const short line, const short column, const int color) {
-        volatile unsigned short * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
+    int kernel_print(const unsigned char c, const int16_t line, const int16_t column, const int32_t color) {
+        volatile uint16_t * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
 
         const int offset = column + line * VGA_WIDTH;
 
@@ -27,7 +27,7 @@ namespace cookie {
     }
 
     void kernel_clear_screen() {
-        volatile unsigned short * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
+        volatile uint16_t * video_memory = reinterpret_cast<unsigned short *>(0xB8000);
 
         int i = 0;
         while (i < VGA_WIDTH * VGA_HEIGHT) {
