@@ -4,11 +4,12 @@
 
 extern "C" void kernel_main(void* multiboot_structure, unsigned int magic_number) {
     cookie::kernel_clear_screen();
-    cookie::enable_cursor(0, 15);
+    cookie::enable_cursor(14, 15);
 
-    const int len = cookie::kernel_print("HELLO WORLD FROM UWU KERNEL");
+    cookie::kernel_print("HELLO WORLD FROM UWU KERNEL", 0, 0, KERNEL_COLOR(LIGHT_MAGENTA, BLACK));
+    const int len = cookie::kernel_print("HERE IS YOUR 42 UwU", 1, 0);
 
-    cookie::update_cursor(1, 0);
+    cookie::update_cursor(2, 0);
 
     cookie::rtc_time time = {};
 
