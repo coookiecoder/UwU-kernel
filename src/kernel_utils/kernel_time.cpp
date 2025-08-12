@@ -4,12 +4,12 @@
 #include "kernel_output.hpp"
 
 namespace cookie {
-    __uint8_t read_rtc_register(const __uint8_t address) {
+    uint8_t read_rtc_register(const uint8_t address) {
         out_byte(CMOS_ADDRESS, 1 << 7 | address);
         return in_byte(CMOS_DATA);
     }
 
-    __uint8_t bcd_to_bin(const __uint8_t bcd_value) {
+    uint8_t bcd_to_bin(const uint8_t bcd_value) {
         return (bcd_value & 0x0F) + (bcd_value >> 4) * 10;
     }
 
@@ -43,7 +43,7 @@ namespace cookie {
 
         } while (result != last);
 
-        __uint8_t register_b = read_rtc_register(0x0B);
+        uint8_t register_b = read_rtc_register(0x0B);
 
         result.second = bcd_to_bin(result.second);
         result.minute = bcd_to_bin(result.minute);

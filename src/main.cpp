@@ -4,36 +4,32 @@
 
 extern "C" void kernel_main(void* multiboot_structure, unsigned int magic_number) {
     cookie::kernel_clear_screen();
-    cookie::enable_cursor(14, 15);
+    cookie::enable_cursor(0, 0);
+    cookie::update_cursor(0, 0);
 
-    cookie::kernel_print("HELLO WORLD FROM UWU KERNEL", 0, 0, KERNEL_COLOR(LIGHT_MAGENTA, BLACK));
-    const int len = cookie::kernel_print("HERE IS YOUR 42 UwU", 1, 0);
+    cookie::init_global_descriptor_table();
 
-    cookie::update_cursor(2, 0);
+    cookie::global_descriptor_table_pointer current;
+    gdt_get(&current);
 
-    cookie::rtc_time time = {};
+    if (cookie::validate_global_descriptor_table(current)) {
+        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE LOADED AND WORKING\n", KERNEL_COLOR(GREEN_FOREGROUND, BLACK_BACKGROUND));
+    } else {
+        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE NOT LOADED OR NOT WORKING\n", KERNEL_COLOR(RED_FOREGROUND, BLACK_BACKGROUND));
+    }
+
+    cookie::kernel_set_title("KERNEL STARTING UP", KERNEL_COLOR(WHITE_FOREGROUND, RED_FOREGROUND));
+
+    cookie::kernel_print('\n');
+    cookie::kernel_print_stack(500);
+    cookie::kernel_print('\n');
+
+    cookie::kernel_print("MAGIC NUMBER ADDRESS AND VALUE : \n");
+    cookie::kernel_print_stack_at(reinterpret_cast<cookie::uint32_t>(&magic_number));
+
+    cookie::kernel_set_title("HELLO WORLD FROM UWU KERNEL", KERNEL_COLOR(WHITE_FOREGROUND, GREEN_FOREGROUND));
 
     while (true) {
-        cookie::get_current_time(time);
-
-        __uint8_t first = time.second % 10 + '0';
-        __uint8_t second = time.second / 10 + '0';
-
-        cookie::kernel_print(first, 24, 79);
-        cookie::kernel_print(second, 24, 78);
-        cookie::kernel_print(":", 24, 77);
-
-        first = time.minute % 10 + '0';
-        second = time.minute / 10 + '0';
-
-        cookie::kernel_print(first, 24, 76);
-        cookie::kernel_print(second, 24, 75);
-        cookie::kernel_print(":", 24, 74);
-
-        first = time.hour % 10 + '0';
-        second = time.hour / 10 + '0';
-
-        cookie::kernel_print(first, 24, 73);
-        cookie::kernel_print(second, 24, 72);
+        cookie::kernel_print_time();
     }
 }

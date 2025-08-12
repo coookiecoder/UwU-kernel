@@ -1,6 +1,11 @@
 ENTRY(_start)
 
 SECTIONS {
+    .gdt 0x800 :
+    {
+        *(.gdt)
+    }
+
     . = 1M;
 
     .text : {
