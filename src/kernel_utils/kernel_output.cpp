@@ -12,7 +12,7 @@ namespace cookie {
             video_memory[offset + i] = str[i] | color;
             ++i;
         }
-
+        
         return i;
     }
 
@@ -33,6 +33,26 @@ namespace cookie {
         while (i < VGA_WIDTH * VGA_HEIGHT) {
             video_memory[i] = ' ' | KERNEL_COLOR(WHITE, BLACK);
             ++i;
+        }
+    }
+
+    void kernel_print_stack(int count) {
+        uint32_t* stack_ptr = reinterpret_cast<uint32_t*>(get_stack_pointer());
+        char hex_buffer[11];
+
+        kernel_print("--- STACK DUMP ---", 5, 0);
+
+        for (int i = 0; i < count; ++i) {
+            uint32_t value = stack_ptr[i];
+
+            // Print the address
+            uint32_to_hex_str(reinterpret_cast<uint32_t>(stack_ptr + i), hex_buffer);
+            kernel_print(hex_buffer, 6 + i, 0);
+            kernel_print(": ", 6 + i, 12);
+
+            // Print the value at that address
+            uint32_to_hex_str(value, hex_buffer);
+            kernel_print(hex_buffer, 6 + i, 14);
         }
     }
 }

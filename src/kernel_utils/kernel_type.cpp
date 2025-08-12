@@ -1,5 +1,8 @@
 #include "kernel_type.hpp"
 
+#include "kernel_output.hpp"
+#include "kernel_input.hpp"
+
 cookie::global_descriptor_table_entry entries[7] __attribute__((section(".gdt"))) = {};
 cookie::global_descriptor_table_pointer pointer = {};
 
@@ -18,27 +21,45 @@ namespace cookie {
     }
 
     void init_global_descriptor_table() {
-        pointer.limit = sizeof(entries) * sizeof(global_descriptor_table_entry) - 1;
+        pointer.limit = sizeof(entries) - 1;
         pointer.base = reinterpret_cast<uint32_t>(entries);
 
         // 0xCF = 4KB pages, 32-bit protected mode
 
         // 0x08: Kernel Code Segment (Ring 0)
-        gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xC);
+        gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xC0);
 
         // 0x10: Kernel Data Segment (Ring 0)
-        gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xC);
+        gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xC0);
 
         // 0x18: Kernel Stack Segment (Ring 0) - Same as data segment
-        gdt_set_gate(3, 0, 0xFFFFFFFF, 0x92, 0xC);
+        gdt_set_gate(3, 0, 0xFFFFFFFF, 0x92, 0xC0);
 
         // 0x20: User Code Segment (Ring 3)
-        gdt_set_gate(4, 0, 0xFFFFFFFF, 0xFA, 0xC);
+        gdt_set_gate(4, 0, 0xFFFFFFFF, 0xFA, 0xC0);
 
         // 0x28: User Data Segment (Ring 3)
-        gdt_set_gate(5, 0, 0xFFFFFFFF, 0xF2, 0xC);
+        gdt_set_gate(5, 0, 0xFFFFFFFF, 0xF2, 0xC0);
 
         // 0x30: User Stack Segment (Ring 3) - Same as data segment
-        gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF2, 0xC);
+        gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF2, 0xC0);
+
+        gdt_flush(reinterpret_cast<cookie::uint32_t>(&pointer));
+    }
+
+    bool validate_global_descriptor_table(global_descriptor_table_pointer current) {
+        return current.base == pointer.base && current.limit == pointer.limit;
+    }
+
+    void uint32_to_hex_str(cookie::uint32_t num, char* buffer) {
+        buffer[0] = '0';
+        buffer[1] = 'x';
+        const char* hex = "0123456789ABCDEF";
+        for (int i = 0; i < 8; ++i) {
+            // Get the i-th hex digit from the right
+            int nibble = (num >> (28 - i * 4)) & 0xF;
+            buffer[i + 2] = hex[nibble];
+        }
+        buffer[10] = '\0'; // Null-terminate the string
     }
 }
