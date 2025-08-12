@@ -6,7 +6,11 @@ volatile cookie::uint16_t * video_memory = reinterpret_cast<unsigned short *>(0x
 
 namespace cookie {
     void kernel_set_title(const char *str, int32_t color) {
-        kernel_print_at(str, 0, 0, color);
+        int offset = kernel_print_at(str, 0, 0, color);
+
+        while (offset < VGA_WIDTH) {
+            video_memory[offset++] = ' ' | color;
+        }
     }
 
 
@@ -68,7 +72,7 @@ namespace cookie {
     void kernel_clear_screen() {
         int i = 0;
         while (i < VGA_WIDTH * VGA_HEIGHT) {
-            video_memory[i] = 0 | KERNEL_COLOR(WHITE, BLACK);
+            video_memory[i] = 0 | KERNEL_COLOR(WHITE_FOREGROUND, BLACK_BACKGROUND);
             ++i;
         }
     }
@@ -142,7 +146,7 @@ namespace cookie {
         }
 
         for (uint8_t column = 0; column < VGA_WIDTH; ++column) {
-            video_memory[23 * VGA_WIDTH + column] = 0 | KERNEL_COLOR(WHITE, BLACK);
+            video_memory[23 * VGA_WIDTH + column] = 0 | KERNEL_COLOR(WHITE_FOREGROUND, BLACK_BACKGROUND);
         }
     }
 

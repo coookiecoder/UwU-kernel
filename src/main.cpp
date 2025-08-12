@@ -13,20 +13,21 @@ extern "C" void kernel_main(void* multiboot_structure, unsigned int magic_number
     gdt_get(&current);
 
     if (cookie::validate_global_descriptor_table(current)) {
-        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE LOADED AND WORKING\n", KERNEL_COLOR(GREEN, BLACK));
+        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE LOADED AND WORKING\n", KERNEL_COLOR(GREEN_FOREGROUND, BLACK_BACKGROUND));
     } else {
-        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE NOT LOADED OR NOT WORKING\n", KERNEL_COLOR(RED, BLACK));
+        cookie::kernel_print("GLOBAL DESCRIPTOR TABLE NOT LOADED OR NOT WORKING\n", KERNEL_COLOR(RED_FOREGROUND, BLACK_BACKGROUND));
     }
 
-    cookie::kernel_set_title("HELLO WORLD FROM UWU KERNEL", KERNEL_COLOR(LIGHT_MAGENTA, BLACK));
+    cookie::kernel_set_title("KERNEL STARTING UP", KERNEL_COLOR(WHITE_FOREGROUND, RED_FOREGROUND));
 
     cookie::kernel_print('\n');
     cookie::kernel_print_stack(500);
     cookie::kernel_print('\n');
 
-
     cookie::kernel_print("MAGIC NUMBER ADDRESS AND VALUE : \n");
     cookie::kernel_print_stack_at(reinterpret_cast<cookie::uint32_t>(&magic_number));
+
+    cookie::kernel_set_title("HELLO WORLD FROM UWU KERNEL", KERNEL_COLOR(WHITE_FOREGROUND, GREEN_FOREGROUND));
 
     while (true) {
         cookie::kernel_print_time();
