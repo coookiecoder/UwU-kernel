@@ -28,10 +28,16 @@
 extern "C" void out_byte(cookie::uint16_t port, cookie::uint8_t data);
 
 namespace cookie {
-    int kernel_print(const char *str, int16_t line = 0, int16_t column = 0, int32_t color = KERNEL_COLOR(WHITE, BLACK));
-    int kernel_print(unsigned char c, int16_t line = 0, int16_t column = 0, int32_t color = KERNEL_COLOR(WHITE, BLACK));
+    void kernel_set_title(const char *str, int32_t color = KERNEL_COLOR(WHITE, BLACK));
+    int kernel_print_at(const char *str, int16_t line = 0, int16_t column = 0, int32_t color = KERNEL_COLOR(WHITE, BLACK));
+    int kernel_print_at(char c, int16_t line = 0, int16_t column = 0, int32_t color = KERNEL_COLOR(WHITE, BLACK));
+    int kernel_print(const char *str, int32_t color = KERNEL_COLOR(WHITE, BLACK));
+    int kernel_print(char c, int32_t color = KERNEL_COLOR(WHITE, BLACK));
     void kernel_clear_screen();
     void kernel_print_stack(int count);
+    void kernel_print_stack_at(uint32_t address);
+    void kernel_print_time();
+    void kernel_print_new_line();
 }
 
 #endif
