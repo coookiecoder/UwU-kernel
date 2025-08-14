@@ -1,6 +1,23 @@
 ASM = nasm
-CPP = i686-linux-gnu-g++
-LD = i686-linux-gnu-ld
+
+CPP_DEFAULT = i686-linux-gnu-g++
+LD_DEFAULT = i686-linux-gnu-ld
+GRUB_DEFAULT = grub-mkrescue
+
+CPP_MAC = i686-elf-g++
+LD_MAC = i686-elf-ld
+GRUB_MAC = i686-elf-grub-mkrescue
+
+ifeq ($(shell uname -s),Darwin)
+	CPP = $(CPP_MAC)
+	LD = $(LD_MAC)
+	GRUB = $(GRUB_MAC)
+else
+	CPP = $(CPP_DEFAULT)
+	LD = $(LD_DEFAULT)
+	GRUB = $(GRUB_DEFAULT)
+endif
+
 
 CPP_FLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdlib -nodefaultlibs
 ASM_FLAGS = -f elf32
@@ -31,7 +48,7 @@ $(TARGET_ISO): $(TARGET)
 	echo "    multiboot /boot/UwU.bin" >> iso/boot/grub/grub.cfg
 	echo "    boot" >> iso/boot/grub/grub.cfg
 	echo "}" >> iso/boot/grub/grub.cfg
-	grub-mkrescue -o UwU.iso iso
+	$(GRUB) -o UwU.iso iso
 
 obj/%.o: src/%.s
 	mkdir -p $(dir $@)
