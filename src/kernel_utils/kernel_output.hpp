@@ -45,6 +45,7 @@ namespace cookie {
     void kernel_clear_screen();
     void kernel_print_stack(int count);
     void kernel_print_stack_at(uint32_t address);
+    void kernel_print_stack_until(uint32_t address);
     void kernel_print_time();
     void kernel_print_new_line();
 }

@@ -110,6 +110,28 @@ namespace cookie {
         kernel_print("\n");
     }
 
+    void kernel_print_stack_until(uint32_t address) {
+        auto stack_ptr = reinterpret_cast<uint32_t *>(get_stack_pointer());
+        char hex_buffer[11];
+
+        kernel_print("--- STACK DUMP ---\n");
+
+        for (int i = 0; stack_ptr + i != reinterpret_cast<uint32_t *>(address); ++i) {
+            uint32_t value = stack_ptr[i];
+
+            // Print the address
+            uint32_to_hex_str(reinterpret_cast<uint32_t>(stack_ptr + i), hex_buffer);
+            kernel_print(hex_buffer);
+            kernel_print(" : ");
+
+            // Print the value at that address
+            uint32_to_hex_str(value, hex_buffer);
+            kernel_print(hex_buffer);
+            kernel_print("\n");
+        }
+
+        kernel_print_stack_at(address);
+    }
 
     void kernel_print_time() {
         rtc_time time = {};

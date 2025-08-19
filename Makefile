@@ -22,13 +22,15 @@ endif
 CPP_FLAGS = -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdlib -nodefaultlibs
 ASM_FLAGS = -f elf32
 
+KERNEL_UTILS = kernel_input kernel_output kernel_time kernel_type kernel_panics
+
 ASM_FILE = src/asm/boot.s src/asm/ports.s src/asm/gdt.s
 CPP_FILE = src/main.cpp \
-	src/kernel_utils/kernel_input.cpp src/kernel_utils/kernel_output.cpp src/kernel_utils/kernel_time.cpp src/kernel_utils/kernel_type.cpp
+	$(foreach buffer, $(KERNEL_UTILS), src/kernel_utils/$(buffer).cpp)
 
 ASM_OBJECT_FILE = obj/asm/boot.o obj/asm/ports.o obj/asm/gdt.o
 CPP_OBJECT_FILE = obj/main.o \
-	obj/kernel_utils/kernel_input.o obj/kernel_utils/kernel_output.o obj/kernel_utils/kernel_time.o obj/kernel_utils/kernel_type.o
+	$(foreach buffer, $(KERNEL_UTILS), obj/kernel_utils/$(buffer).o)
 
 TARGET = UwU.bin
 TARGET_ISO = UwU.iso
